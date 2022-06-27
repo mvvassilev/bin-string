@@ -1,9 +1,12 @@
 BINARY_LENGHT = 3
-NODES = ([0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1],
-         [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1])
+NODES = ([0, 0, 0], [0, 0, 0], [0, 0, 1], [0, 1, 1], [1, 1, 1],
+         [1, 1, 1], [1, 1, 0], [1, 0, 1], [0, 1, 1], [1, 1, 0],
+         [1, 0, 0], [0, 0, 1], [0, 1, 0], [1, 0, 1], [0, 1, 0],
+         [1, 0, 0], [0, 0, 0])
+
 
 def get_strings(arrange, already_seen):
-    if len(arrange) == 2**BINARY_LENGHT and 2*arrange.count(0) == 2**BINARY_LENGHT:
+    if len(arrange) == 2**BINARY_LENGHT + 2 and 2*arrange.count(0) == 2**BINARY_LENGHT + 2:
         print(f"{''.join(map(str, arrange))}")
 
     for bit in (0, 1):
@@ -20,7 +23,7 @@ def get_strings(arrange, already_seen):
 
 if __name__ == '__main__':
     already_seen = []
-    for _ in range(2**BINARY_LENGHT):
+    for _ in range(2**BINARY_LENGHT + 2):
         already_seen.append(0)
 
     for node in NODES:
