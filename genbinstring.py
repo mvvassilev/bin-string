@@ -1,30 +1,50 @@
-BINARY_LENGHT = 3
-NODES = ([0, 0, 0], [0, 0, 0], [0, 0, 1], [0, 1, 1], [1, 1, 1],
-         [1, 1, 1], [1, 1, 0], [1, 0, 1], [0, 1, 1], [1, 1, 0],
-         [1, 0, 0], [0, 0, 1], [0, 1, 0], [1, 0, 1], [0, 1, 0],
-         [1, 0, 0], [0, 0, 0])
+import itertools
+import pathlib
+
+GRAPH = {"000": ["000", "001"], "001": ["010", "011"],
+         "011": ["111", "110"], "111": ["111", "110"],
+         "110": ["101", "100"], "101": ["010", "011"],
+         "010": ["100", "101"], "100": ["000", "001"]}
+
+NODES = ["000", "001", "010", "011",
+         "100", "101", "110", "111"]
 
 
-def get_strings(arrange, already_seen):
-    if len(arrange) == 2**BINARY_LENGHT + 2 and 2*arrange.count(0) == 2**BINARY_LENGHT + 2:
-        print(f"{''.join(map(str, arrange))}")
+def get_hamiltonian_path(start_node):
+    results = []
+    paths_list = list(itertools.permutations(NODES))
+    for pathCandidate in paths_list:
+        isHamiltonian = True
+        for i in range(len(pathCandidate)-1):
+            currentNode = pathCandidate[i]
+            nextNode = pathCandidate[i+1]
+            edgeList = GRAPH[currentNode]
+            hasNoPathToNext = not nextNode in edgeList
+            if(hasNoPathToNext):
+                isHamiltonian = False
+        if isHamiltonian == True:
+            results.append(pathCandidate)
+    return(results)
 
-    for bit in (0, 1):
-        new_seen = already_seen[:]
-        new_arrange = arrange + [bit]
 
-        string = ''.join(map(str, new_arrange[-BINARY_LENGHT:]))
-        seen = int(string, 2)
-
-        if not new_seen[seen]:
-            new_seen[seen] = 1
-            get_strings(new_arrange, new_seen)
+def trim_concat(string1, string2):
+    k = 0
+    for i in range(1, len(string2)):
+        if string1.endswith(string2[:i]):
+            k = i
+    # Simply concatenate them
+    return string1 + string2[k:]
 
 
-if __name__ == '__main__':
-    already_seen = []
-    for _ in range(2**BINARY_LENGHT + 2):
-        already_seen.append(0)
-
-    for node in NODES:
-        get_strings(node, already_seen)
+if __name__ == "__main__":
+    paths = []
+    result = ""
+    sequence_number = 1
+    for node in NODES[0:4]:
+        paths = get_hamiltonian_path(node)
+        for path in paths:
+            for node_string in path:
+                result = trim_concat(result, node_string)
+            print(f"{sequence_number}: {result}")
+            result = ""
+            sequence_number += 1
